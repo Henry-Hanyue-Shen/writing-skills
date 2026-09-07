@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "gate_id": "demo-methods-gate",
+  "artifact": {
+    "input": "paper/main.tex",
+    "output": "paper/main.edited.tex",
+    "scope": "full",
+    "language": "en"
+  },
+  "verdict": "RETURN_FOR_RESEARCH",
+  "checks": {
+    "semantic_fidelity": {"status": "pass", "detail": "All edited claims retain their original scope and modality."},
+    "methodology": {"status": "warn", "detail": "The reported sample excludes records without a documented exclusion rule."},
+    "terminology": {"status": "pass", "detail": "Method and dataset names are consistent across the manuscript."},
+    "citations": {"status": "pass", "detail": "All existing citation contexts are supported by supplied primary sources."},
+    "numbers": {"status": "pass", "detail": "Text, Table 2 and Figure 3 report the same values and units."},
+    "prose": {"status": "pass", "detail": "The supplied manuscript was edited for clarity and document-level repetition."}
+  },
+  "edits": [
+    {
+      "location": "Methods, paragraphs 1-3",
+      "kind": "method-reporting",
+      "summary": "Aligned the sampling sequence with the supplied protocol and normalized the dataset name.",
+      "claim_change": "none"
+    }
+  ],
+  "return_to_caller": [
+    {
+      "id": "R1",
+      "type": "source-recovery",
+      "blocking": true,
+      "affected_location": "Methods, paragraph 4 and Table 1",
+      "need": "The exclusion rule used to derive the reported sample size.",
+      "reason": "The supplied draft and artifacts do not explain why 37 records were excluded.",
+      "acceptance_test": "Return a dated protocol, config, or executable-code excerpt that states the exclusion rule and applies to the reported run."
+    }
+  ],
+  "unresolved": [],
+  "notes": ["Unaffected language and methodology-reporting edits were completed before return."]
+}

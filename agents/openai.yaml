@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Editor Gate"
+  short_description: "Audit and revise research prose without doing research"
+  default_prompt: "Use $research-editor-gate to audit and revise this manuscript, returning research gaps to the caller."
