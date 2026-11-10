@@ -1,0 +1,148 @@
+% =====================================================================
+% Argument Tree template (grayscale, print-ready)
+% Part of the `argument-tree` skill. Compile with: pdflatex (twice).
+% Replace every <<...>> placeholder. Delete any box type a claim lacks.
+% The example content below is a neutral toy study; overwrite all of it.
+% =====================================================================
+\documentclass[10pt]{article}
+\usepackage{mathptmx}\usepackage[scaled=0.9]{helvet}\usepackage[T1]{fontenc}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[edges]{forest}
+\usepackage[most]{tcolorbox}
+\usepackage{booktabs,tabularx,enumitem,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\setlist{nosep,leftmargin=1.2em}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\parindent}{0pt}
+
+% ---- Evidence tags: boxed sans letters (grayscale-safe)
+\newcommand{\evtag}[1]{\fbox{\scriptsize\sffamily\bfseries #1}}
+\setlength{\fboxsep}{1pt}\setlength{\fboxrule}{0.4pt}
+\newcommand{\EvT}{\evtag{T}}   % theory (proof / formal check)
+\newcommand{\EvL}{\evtag{L}}   % literature
+\newcommand{\EvN}{\evtag{N}}   % numerical (this study)
+
+% ---- Evidence boxes: square corners, thin rule, title bar weight = evidence type
+\tcbset{evbase/.style={enhanced,breakable,sharp corners,boxrule=0.4pt,colframe=black!70,colback=white,
+  fonttitle=\sffamily\bfseries\footnotesize,fontupper=\small,left=4pt,right=4pt,top=2pt,bottom=2pt,
+  boxsep=1pt,toptitle=1pt,bottomtitle=1pt,before skip=4pt,after skip=4pt}}
+\newtcolorbox{thbox}[1][THEORETICAL EVIDENCE]{evbase,colbacktitle=black!80,coltitle=white,title={#1}}
+\newtcolorbox{libox}[1][LITERATURE EVIDENCE]{evbase,colbacktitle=black!50,coltitle=white,title={#1}}
+\newtcolorbox{nubox}[1][NUMERICAL EVIDENCE]{evbase,colbacktitle=black!20,coltitle=black,title={#1}}
+\newtcolorbox{cabox}[1][CAVEATS AND BOUNDARIES]{evbase,colback=black!4,colbacktitle=black!4,coltitle=black,
+  borderline={0.4pt}{0pt}{black!70,dashed},boxrule=0pt,title={#1}}
+% Claim header: heavy top rule, sans title, italic one-line statement
+\newtcolorbox{claimbox}[1]{enhanced,sharp corners,boxrule=0pt,colback=white,colframe=white,
+  borderline north={1.2pt}{0pt}{black},borderline south={0.4pt}{0pt}{black},
+  colbacktitle=white,coltitle=black,title={#1},fonttitle=\sffamily\bfseries\large,
+  fontupper=\small\itshape,left=0pt,right=0pt,top=1pt,bottom=4pt,toptitle=4pt,bottomtitle=0pt,
+  before skip=10pt,after skip=4pt}
+
+\begin{document}
+% ===================================================================== title
+\begin{center}
+{\sffamily\LARGE\bfseries Argument Tree: <<Short Title of the Work>>}\\[4pt]
+{\small <<Target venue or purpose>> \textperiodcentered{} <<scope, e.g. datasets>> \textperiodcentered{} status <<date>>}\\[2pt]
+{\footnotesize Evidence types:\enspace \EvT{} theory (formally checked where marked)\quad \EvL{} literature\quad \EvN{} numerical (this study)}
+\end{center}
+\vspace{-4pt}\noindent\rule{\linewidth}{0.8pt}
+
+% ===================================================================== root thesis
+\begin{tcolorbox}[enhanced,sharp corners,boxrule=0.6pt,colframe=black,colback=black!5,colbacktitle=black,coltitle=white,
+  title={ROOT THESIS},fonttitle=\sffamily\bfseries\footnotesize,fontupper=\small,left=5pt,right=5pt,toptitle=1pt,bottomtitle=1pt]
+<<One to three sentences. The single claim the whole document defends, scoped exactly to what the evidence supports.
+Bold the two or three load-bearing phrases.>>
+Example: A \textbf{lightweight early-exit head} cuts inference cost by \textbf{38\%} on two image benchmarks with
+\textbf{no significant accuracy loss}; the saving is explained by a simple confidence bound.
+\end{tcolorbox}
+
+% ===================================================================== tree (page 1)
+% Rules: level 0 = root, level 1 = claims C1..Cn (3-6), level 2 = sub-claims Ck.j (2-4 each).
+% Leaf text <= ~60 characters, ending with its evidence tags. Use manual \\ in level-0/1 labels.
+% Wrap every node's content in {braces} (commas break forest otherwise).
+\vspace{2pt}
+\begin{center}
+\begin{forest}
+for tree={grow'=0, draw=black!70, line width=0.4pt, font=\small, inner sep=3pt, s sep=3pt, l sep=14pt,
+          edge={black!70, line width=0.4pt}, forked edges, anchor=west, child anchor=west, parent anchor=east, calign=center,
+          text width=9.6cm, align=left},
+where level=0{text width=2.0cm, align=left, fill=black, text=white, font=\small\sffamily\bfseries}{},
+where level=1{text width=3.9cm, align=left, fill=black!12, font=\small\sffamily\bfseries}{},
+[{Root thesis:\\ cheaper,\\ not worse}
+  [{C1. Cost drops\\ substantially}
+    [{C1.1 38\% fewer FLOPs at matched accuracy \EvN}]
+    [{C1.2 Saving bounded by exit-rate formula \EvT\,\EvN}]]
+  [{C2. Accuracy is\\ not significantly lower}
+    [{C2.1 Paired CIs include 0 on both benchmarks \EvN}]
+    [{C2.2 Consistent with prior early-exit reports \EvL}]]
+  [{C3. Mechanism:\\ confidence calibration}
+    [{C3.1 Exit decision is a calibrated threshold \EvT}]
+    [{C3.2 Miscalibrated heads lose the saving \EvN}]]
+]
+\end{forest}
+\end{center}
+
+\newpage
+% ===================================================================== one section per claim
+% Order inside each claim: claimbox -> thbox -> nubox -> libox -> cabox (omit any that is empty).
+% Every number carries its conditions (dataset, n, seeds, CI). Every [k] points to the reference list.
+
+\begin{claimbox}{C1. Inference cost drops substantially}
+<<One sentence restating the claim precisely.>> The early-exit head removes 38\% of FLOPs at matched accuracy.
+\end{claimbox}
+\begin{thbox}
+\textbf{P1} (<<formal name, e.g. Lean theorem or lemma number>>): expected cost $=c_{\text{head}}+(1-r)\,c_{\text{full}}$,
+where $r$ is the exit rate. <<State what was proved, under which assumptions, and how it was checked.>>
+\end{thbox}
+\begin{nubox}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}\toprule
+C1.1 & <<Benchmark A>>: 38\% fewer FLOPs (5 seeds, SD 1.2); <<Benchmark B>>: 35\% (5 seeds, SD 2.0).\\
+C1.2 & Observed exit rate $r=0.41$; predicted saving 37\%, measured 38\%.\\\bottomrule
+\end{tabularx}
+\end{nubox}
+\begin{cabox}
+Savings measured on one GPU type at batch size 1; larger batches reduce the benefit.
+\end{cabox}
+
+\begin{claimbox}{C2. Accuracy is not significantly lower}
+Best configuration vs best configuration, seeds aggregated within each.
+\end{claimbox}
+\begin{nubox}
+\begin{tabularx}{\linewidth}{@{}l c c c c Y@{}}\toprule
+Benchmark & seeds & baseline & ours & $\Delta$ & 95\% CI\\\midrule
+<<A>> & 5 & 91.2$\pm$0.4 & 90.9$\pm$0.5 & $-$0.3 & [$-$0.9, +0.3]\\
+<<B>> & 5 & 78.5$\pm$0.8 & 78.6$\pm$0.7 & +0.1 & [$-$0.8, +1.0]\\\bottomrule
+\end{tabularx}
+\end{nubox}
+\begin{libox}
+C2.2: Early-exit studies [1] report small accuracy changes at similar exit rates. <<Say exactly what each cited work shows and how
+it relates; name the closest prior work and the precise difference.>>
+\end{libox}
+\begin{cabox}
+"Not significantly lower" is not equivalence; no equivalence test was run.
+\end{cabox}
+
+\begin{claimbox}{C3. Mechanism: confidence calibration}
+The saving depends on the exit head being calibrated.
+\end{claimbox}
+\begin{thbox}
+\textbf{P2}: if the head is calibrated, thresholding confidence at $\tau$ bounds the exit error by $1-\tau$. <<Proof status.>>
+\end{thbox}
+\begin{nubox}
+C3.2: with temperature scaling removed, the exit rate falls to 0.12 and the saving to 9\%.
+\end{nubox}
+
+% ===================================================================== global limitations
+\begin{cabox}[GLOBAL LIMITATIONS AND SOURCES]
+<<Statistical limits (which differences are significant, seed counts), scope limits (datasets, models), which claims are
+proved vs numerical only, citation-verification date, and where the raw results live.>>
+\end{cabox}
+
+\section*{References (verified <<date>>)}
+{\small
+\begin{enumerate}[label={[\arabic*]},leftmargin=2.2em]
+\item <<Authors. Title. \emph{Venue} Year. arXiv/DOI.>>
+\end{enumerate}}
+\end{document}
