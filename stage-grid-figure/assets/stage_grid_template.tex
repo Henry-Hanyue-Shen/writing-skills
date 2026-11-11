@@ -1,0 +1,109 @@
+% Stage-aligned method comparison figure (rows = methods, columns = pipeline stages).
+% Worked example: FedAvg vs AFL vs an analytic detection head. Copy this file, keep the
+% layout block and the icon macros, and rewrite the three row sections.
+% Preamble needs: \usepackage{tikz}  \usetikzlibrary{arrows.meta}
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[font=\scriptsize,>={Latex[length=1.5mm]},x=1cm,y=1cm,
+ blk/.style={draw,line width=0.5pt,fill=white,align=center,inner sep=2pt,minimum height=8mm},
+ lab/.style={align=center,font=\scriptsize,inner sep=1pt},
+ ar/.style={->,line width=0.6pt}]
+% ================= LAYOUT (edit first) =================
+% Horizontal extent. 17.85 cm fills the IEEEtran two-column text width (18.19 cm).
+\def\xL{-0.1}\def\xR{17.75}
+% Column separators (dashed) and column centres. Column 0 (left of \sA) holds the row titles.
+\def\sA{1.8}\def\sB{5.1}\def\sC{8.6}\def\sD{11.9}\def\sE{15.2}
+\def\cA{3.45}\def\cB{6.85}\def\cC{10.25}\def\cD{13.55}\def\cE{16.5}
+% Row centre lines. Everything in a row is placed relative to its centre line, so a row
+% moves as one unit when its \y.. changes. Rows need not be equally tall: a row with
+% labels above and below its icons needs about 2.4 cm, a plain row about 1.5 cm.
+\def\ya{-1.00}\def\yb{-2.72}\def\yc{-4.92}
+% Horizontal rules: under the headers, between baseline rows, top of our band, bottom.
+\def\yHead{-0.25}\def\yRuleAB{-1.72}\def\yBand{-3.72}\def\yBot{-6.12}
+
+% ================= ICONS: data objects (#1,#2 = lower-left corner) =================
+\newcommand{\imgicon}[2]{\draw[line width=0.4pt,fill=white] (#1,#2) rectangle ++(0.72,0.56);}  % an image
+\newcommand{\vecbar}[2]{\draw[line width=0.3pt,fill=black!40] (#1,#2) rectangle ++(0.11,0.62);} % a feature vector
+\newcommand{\gram}[3]{\draw[line width=0.4pt,fill=#3] (#1,#2) rectangle ++(0.46,0.46);}        % a square matrix, #3 = fill
+\newcommand{\wmat}[2]{\draw[line width=0.4pt,fill=white] (#1,#2) rectangle ++(0.26,0.56);      % a weight matrix
+  \draw[line width=0.25pt] (#1,#2+0.187) -- ++(0.26,0) (#1,#2+0.373) -- ++(0.26,0);}
+
+% ================= FRAME =================
+% Band marking the proposed method (drawn first so everything else sits on top of it).
+\fill[black!9] (\xL,\yBot) rectangle (\xR,\yBand);
+\draw[line width=1.0pt] (\xL,\yBot) rectangle (\xR,\yBand);
+% Column headers and separators.
+\foreach \x/\t in {\cA/{Training samples},\cB/{Client computation},\cC/{Uploaded to the server},\cD/{Server computation},\cE/{Result}}
+  {\node[font=\scriptsize\bfseries] at (\x,0.02) {\t};}
+\draw[line width=0.6pt] (\xL,\yHead) -- (\xR,\yHead);
+\foreach \x in {\sA,\sB,\sC,\sD,\sE} {\draw[densely dashed,black!45,line width=0.3pt] (\x,0.22) -- (\x,\yBot);}
+\draw[black!45,line width=0.3pt] (\xL,\yRuleAB) -- (\xR,\yRuleAB);
+% Row titles: bold name, task or setting on the second line.
+\node[anchor=west,align=left,inner sep=0pt] at (0,\ya) {\textbf{(a) FedAvg}\\detection};
+\node[anchor=west,align=left,inner sep=0pt] at (0,\yb) {\textbf{(b) AFL}~\cite{aflkey}\\classification};
+\node[anchor=west,align=left,inner sep=0pt] at (0,\yc) {\textbf{(c) Ours}\\detection};
+
+% ================= (a) iterative baseline =================
+% A loop is two opposite arrows spanning the columns it crosses; the upload cell stays empty.
+\foreach \dx in {0,0.15,0.30,0.45} {\vecbar{2.55+\dx}{\ya-0.31}}
+\node[lab,anchor=west] at (3.25,\ya) {proposal\\features};
+\node[blk,text width=25mm] (a2) at (\cB,\ya) {SGD on the head,\\$E$ local epochs};
+\node[blk,text width=23mm] (a4) at (\cD,\ya) {average the\\client heads};
+\draw[ar] ([yshift=1.7mm]a2.east) -- node[above,lab,pos=0.5]{head weights} ([yshift=1.7mm]a4.west);
+\draw[ar] ([yshift=-1.7mm]a4.west) -- node[below,lab,pos=0.5]{\textbf{repeat $T$ = 50--200 rounds}} ([yshift=-1.7mm]a2.east);
+\wmat{16.05}{\ya-0.20}\wmat{16.60}{\ya-0.20}
+\node[lab] at (16.18,\ya-0.42) {$W$}; \node[lab] at (16.73,\ya-0.42) {$W_b$};
+\draw[ar] (a4.east) -- (15.95,\ya);
+
+% ================= (b) closest prior method =================
+\imgicon{2.0}{\yb-0.28}
+\node[blk,text width=11mm] (b1) at (3.60,\yb) {frozen\\backbone};
+\draw[ar] (2.72,\yb) -- (b1.west);
+\vecbar{4.70}{\yb-0.31}
+\draw[ar] (b1.east) -- (4.66,\yb);
+\node[lab] at (\cA,\yb-0.68) {\textbf{one} feature per \textbf{image}};
+\node[blk,text width=25mm] (b2) at (\cB,\yb) {\textbf{solve} least squares\\on each client};
+\draw[ar] (4.86,\yb) -- (b2.west);
+\wmat{9.50}{\yb-0.28}\gram{10.40}{\yb-0.23}{black!30}
+\node[lab] at (9.63,\yb-0.52) {$\hat W_k$}; \node[lab] at (10.63,\yb-0.48) {$X_k^{\top}X_k$};
+\node[lab] at (\cC,\yb+0.62) {\textbf{solution} + \textbf{one} Gram matrix};
+\draw[ar] (b2.east) -- (9.40,\yb);
+\node[blk,text width=25mm] (b4) at (\cD,\yb) {\textbf{merge} the client\\solutions (AA law)};
+\draw[ar] (11.00,\yb) -- (b4.west);
+\wmat{16.37}{\yb-0.28}
+\node[lab] at (\cE,\yb-0.50) {$W$};
+\node[lab] at (\cE,\yb+0.62) {image classifier};
+\draw[ar] (b4.east) -- (16.27,\yb);
+
+% ================= (c) proposed method =================
+% Same glyphs as row (b), different counts: four bars against one, a stack of matrices
+% against one. The count carries the difference before the reader reads a word.
+\imgicon{2.0}{\yc-0.28}
+\draw[line width=0.5pt] (2.07,\yc-0.20) rectangle ++(0.26,0.30) (2.40,\yc-0.06) rectangle ++(0.24,0.26) (2.22,\yc-0.24) rectangle ++(0.34,0.18);
+\node[blk,text width=11mm] (c1) at (3.60,\yc) {frozen\\detector};
+\draw[ar] (2.72,\yc) -- (c1.west);
+\foreach \dx in {0,0.14,0.28,0.42} {\vecbar{4.50+\dx}{\yc-0.31}}
+\draw[ar] (c1.east) -- (4.46,\yc);
+\node[lab] at (\cA,\yc-0.80) {\textbf{300 proposals} per image,\\with a \textbf{background} class};
+\node[blk,text width=25mm] (c2) at (\cB,\yc) {\textbf{accumulate} statistics\\per class, no solve};
+\draw[ar] (5.08,\yc) -- (c2.west);
+\foreach \d in {0.27,0.18,0.09,0} {\gram{9.05+\d}{\yc-0.32+\d}{black!30}}
+\node[lab] at (9.42,\yc-0.72) {$P_c,\,s_c,\,n_c$\\$C{+}1$ classes};
+\gram{10.78}{\yc-0.23}{black!70}
+\node[lab] at (11.01,\yc-0.72) {$P_b,\,L_b$\\boxes};
+\node[lab] at (\cC,\yc+0.80) {\textbf{per-class} statistics\\+ \textbf{box} statistics};
+\draw[ar] (c2.east) -- (8.95,\yc);
+% Three boxes in one 3.3 cm cell: widths are budgeted so each gap stays >= 2 mm (room for an arrowhead).
+\node[blk,text width=5.5mm] (c4a) at (12.34,\yc) {sum};
+\node[blk,text width=10.5mm] (c4b) at (13.50,\yc) {\textbf{set class}\\\textbf{weights}};
+\node[blk,text width=6.5mm] (c4c) at (14.71,\yc) {solve};
+\draw[ar] (11.40,\yc) -- (c4a.west); \draw[ar] (c4a) -- (c4b); \draw[ar] (c4b) -- (c4c);
+\node[lab] at (\cD,\yc-0.72) {from \textbf{global} class counts};
+\wmat{16.05}{\yc-0.28}\wmat{16.60}{\yc-0.28}
+\node[lab] at (16.18,\yc-0.50) {$W$}; \node[lab] at (16.73,\yc-0.50) {$W_b$};
+\node[lab] at (\cE,\yc+0.72) {classifier and\\\textbf{box regressor}};
+\draw[ar] (c4c.east) -- (15.95,\yc);
+\end{tikzpicture}
+\caption{The proposed head against the two closest designs, stage by stage. FedAvg (a) exchanges head weights for $T$ rounds. AFL~\cite{aflkey} (b) and our head (c) need one upload; they differ in every stage: the samples, what the client computes, what it uploads, what the server computes, and the result.}
+\label{fig:overview}
+\end{figure*}
