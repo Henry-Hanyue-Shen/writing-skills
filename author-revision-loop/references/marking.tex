@@ -1,0 +1,31 @@
+% --- author-revision-loop markup -------------------------------------------
+% Paste into the preamble (after \usepackage{xcolor}, or keep the line below).
+% \markuptrue  : new text red, deleted text red + struck through (review copy)
+% \markupfalse : new text black, deleted text gone (clean copy)
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}   % normalem keeps \emph as italics
+\newif\ifmarkup
+\markuptrue
+\ifmarkup
+  \newcommand{\rn}[1]{{\color{red}#1}}                      % new or changed text
+  \newcommand{\rdel}[1]{{\color{red}\sout{#1}}}             % deleted text, same paragraph
+  \newcommand{\rdelnote}[1]{{\color{red}\sout{[deleted: #1]}}} % deleted display/figure/table/paragraph
+\else
+  \newcommand{\rn}[1]{#1}
+  \newcommand{\rdel}[1]{}
+  \newcommand{\rdelnote}[1]{}
+\fi
+% Rules for \rdel (ulem):
+%  - one paragraph at most; no \par, no display math, no environments inside;
+%  - wrap \cite, \ref, \eqref and footnotes in braces: \rdel{as in {\cite{x}}};
+%  - inline math is fine: \rdel{the bound $L$ holds}.
+%  - replacement: leave a space between old and new, \rdel{an exact} \rn{a}
+%    (without it the struck and new words run together: "an exacta").
+% Deleting a display, figure, table or several paragraphs: leave a short
+% \rdelnote{display (3): definition of K} in place and keep the old source
+% commented out between the lines
+%   % RDEL-BEGIN <id>
+%   % ...old source...
+%   % RDEL-END <id>
+% so it can be restored. finalize.py removes both.
+% ---------------------------------------------------------------------------

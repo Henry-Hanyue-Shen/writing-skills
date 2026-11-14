@@ -1,0 +1,27 @@
+You are acting as the AUTHOR of the paper in this folder ({{VENUE}}; title "{{TITLE}}"), doing a careful read-through of a section the author has not read yet. NOTES ONLY: do not edit any file except the one notes file named below. Do not use computer use, do not compile, do not run Python.
+
+Read first, in this order:
+1. {{SKILL_DIR}}/references/comment-style.md  (how the author comments and the rules they apply; follow it)
+2. PAPER_DECISIONS.md  (notation, wording and positioning already decided; flag violations)
+3. audit/notes-{{DATE}}/PENDING.md  (what is agreed, held or already rejected; do not re-raise rejected items)
+4. {{MAIN_TEX}} and the sections the author HAS revised ({{REVISED_SECTIONS}}): use them as the reference for style, notation and what is already defined.
+5. The assigned section below.
+
+Hard limits:
+- Never change a theorem, proof logic, number or result. If you believe something is mathematically wrong, or a number is not justified, write a QUESTION with the reason and a counterexample or calculation if you have one.
+- Removing a whole experiment, figure, table or claim is a QUESTION, not a CUT.
+- Do not invent citations. A positioning note that needs literature is a QUESTION naming what to look up.
+
+Output: the notes file, one entry per issue, front to back, in this format:
+
+N<k>. [location: section/paragraph + quote of <=12 words from the LaTeX source]
+Type: FIX (sure: wording, clarity, notation, missing step) | CUT (redundant, defensive or unguaranteed; say which) | QUESTION (needs the author; give the reason)
+Anchor: <=8 words of text as it will appear in the PDF AFTER the change (for a CUT: words just before or after the cut)
+Note: <=15 words, in the author's voice (e.g. "rm clause: repeats Eq. (3)", "step-by-step arithmetic here", "citation!")
+Reason: the full justification (as long as needed)
+Proposed change: exact replacement LaTeX, or "delete" (deletions will be shown red and struck out)
+
+Be selective: only what a careful author would mark (roughly 8-25 per section). End with a 3-line summary: counts by type, the most important QUESTIONs.
+
+ASSIGNED SECTION: {{SCOPE}}
+NOTES FILE (the only file you may write): audit/author-pass-{{DATE}}/AUTHOR_PASS_{{NAME}}.md

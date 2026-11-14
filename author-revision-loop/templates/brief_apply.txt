@@ -1,0 +1,18 @@
+Apply vetted revision notes to {{FILE}} ONLY. Notes: {{NOTES_FILE}}. Decisions to respect: PAPER_DECISIONS.md.
+
+Do not use computer use, do not compile, do not run Python.
+
+Markup (macros are defined in the preamble):
+- New or changed words: \rn{...} (red).
+- Deleted words in running text: \rdel{...} (red, struck through). Never just delete text while markup is on.
+  Inside \rdel wrap \cite, \ref, \eqref and footnotes in braces: \rdel{as shown in {\cite{x}}}. One paragraph at most; no display math or environments inside.
+- Deleted display, figure, table or several paragraphs: put \rdelnote{<what was deleted, <=8 words>} where it was, and keep the old source commented out between "% RDEL-BEGIN <note id>" and "% RDEL-END <note id>" lines.
+- A replacement is \rdel{old} \rn{new} (with a space between them) unless the old wording is only a word or two inside a rewritten sentence, then \rn{whole new sentence} after \rdel{whole old sentence}.
+
+Apply: {{APPLY_LIST}}
+Do NOT apply: {{SKIP_LIST}}
+Adjustments decided by the checker (these override the notes): {{ADJUSTMENTS}}
+
+Never change a theorem, proof logic, number or result beyond what an applied note says. Re-check each note against the current source before applying (the text may have moved). If a note no longer fits, skip it and say why.
+
+Report: for each note, APPLIED / SKIPPED (reason), with the final LaTeX.
